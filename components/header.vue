@@ -15,11 +15,12 @@
       </el-row>
 
       <el-row type="flex" align="middle">
-        <el-dropdown v-if="false">
+        <!-- 通过仓库的token值是否存在判断是否显示 -->
+        <el-dropdown v-if="$store.state.user.userInfo.token">
           <el-row type="flex" align="middle" class="el-dropdown-link">
             <nuxt-link to="#">
-              <img src="http://157.122.54.189:9093/images/pic_sea.jpeg">
-              用户名
+              <img :src="$axios.defaults.baseURL+$store.state.user.userInfo.user.defaultAvatar">
+              {{$store.state.user.userInfo.user.nickname}}
             </nuxt-link>
             <i class="el-icon-caret-bottom el-icon--right"></i>
           </el-row>
@@ -32,7 +33,6 @@
             </el-dropdown-item>
           </el-dropdown-menu>
         </el-dropdown>
-
         <nuxt-link to="/user/login" class="account-link" v-else>登录 / 注册</nuxt-link>
       </el-row>
     </el-row>
@@ -41,7 +41,11 @@
 <script>
 export default {
   methods: {
-    handleLogout() {}
+    handleLogout() {
+      this.$store.commit("user/clearLoginInfo")
+      this.$message.success("退出成功")
+      this.$router.push("/")
+    },
   }
 };
 </script>
