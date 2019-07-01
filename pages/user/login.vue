@@ -17,8 +17,8 @@
   </div>
 </template>
 <script>
-import RegisterForm from "@/pages/user/registerForm.vue"
-import loginForm from "@/pages/user/loginForm.vue"
+import RegisterForm from "@/components/user/registerForm.vue"
+import loginForm from "@/components/user/loginForm.vue"
 export default {
   data() {
     return {

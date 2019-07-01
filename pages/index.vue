@@ -26,7 +26,6 @@
             <i>{{item.name}}</i>
           </span>
         </el-row>
-
         <!-- 输入框 -->
         <el-row type="flex" align="middle" class="search-input">
           <input
@@ -83,6 +82,8 @@ export default {
     handleSearch() {
       // 获取当前所处的选项位置 
       const item=this.options[this.currentOption]
+      // 从数据中拿到当前搜索停留的索引
+      //路由跳转的时候除了路由地址还要加上搜索表单内的数据
       this.$router.push(item.url+this.searchValue)
     }
   },

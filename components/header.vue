@@ -55,6 +55,7 @@ export default {
   line-height: 60px;
   box-sizing: border-box;
   background: #fff;
+  border-bottom: 5px solid #ccc;
   .main {
     width: 1000px;
     margin: 0 auto;
