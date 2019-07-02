@@ -76,43 +76,51 @@ export default {
     };
   },
   methods: {
-    // 选择起飞机场触发的事件
-    handleAirport(v) {
-      let arr = this.data.flights.filter(value => {
-        return value.org_airport_name === v;
+    // 起飞机场筛选触发
+    handleAirport(value) {
+      let arr =this.data.flights.map(v => {
+        // 将机票列表与当前选中的值进行比较，
+        return v.org_airport_name === value;
       });
-      this.$emit("setDataList", arr);
     },
-    // 选择起飞时间的时候触发
+    // 起飞时间筛选触发
     handleFlightTimes(value) {
-       this.flightTimes = value.from +":00-"+ value.to+":00"
-       const arr = this.data.flights.filter(v => {
+      this.flightTimes = value.from + ":00-" + value.to + ":00";
+      // 选择后是一个对象，将他转化
+
+      const arr = this.data.flights.filter(v => {
         // 开始的小时数字
         const start = +v.dep_time.split(":")[0];
+
         return value.from <= start && value.to > start;
       });
+
+      // 触发修改机票列表的方法 setDataList
       this.$emit("setDataList", arr);
     },
-    // 选择航空公司时候触发
-    handleCompany(v) {
-      let arr = this.data.flights.filter(value => {
-        return value.airline_name === v;
+    // 选择航空公司触发
+    handleCompany(value) {
+      let arr = this.data.flights.map(v => {
+        return v.airline_name === value;
       });
-      this.$emit("setDataList", arr)
-    },
-    // 选择机型大小的时候触发
-    handleAirSize(v) {
-      const arr = this.data.flights.filter(value => value.plane_size === v);
 
       this.$emit("setDataList", arr);
     },
-    // 撤销的时候触发
+    // 选择机型大小触发
+    handleAirSize(value) {
+      let arr = this.data.flights.map(v => {
+        return v.plane_size === value;
+      });
+
+      this.$emit("setDataList", arr);
+    },
+    // 撤销所有筛选条件触发
     handleFiltersCancel() {
       this.airport = "";
       this.flightTimes = "";
       this.company = "";
       this.airSize = "";
-
+      // 清空所有选择项
       this.$emit("setDataList", this.data.flights);
     }
   }

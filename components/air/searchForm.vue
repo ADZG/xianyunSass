@@ -144,10 +144,16 @@ export default {
         });
       });
       if (!valid) return; //如果验证不通过，则不继续执行
+      // 在搜索之后，将数据保存在本地中
+      const airs = JSON.parse(localStorage.getItem("air") || `[]`);
+      airs.push(this.form)
+      localStorage.setItem("airs",JSON.stringify(airs))
+
       this.$router.push({
         path: "air/flights",
         query: this.form
       });
+      
     },
     asyncQuery(queryString) {
       return new Promise((resolve, reject) => {
@@ -169,7 +175,11 @@ export default {
       });
     },
     change() {
-      
+      const { departCity, departCode, destCity, destCode } = this.form;
+      this.form.departCity = destCity;
+      this.form.departCode = destCode;
+      this.form.destCity = departCit;
+      this.form.destCode = departCode;
     }
   }
 };

@@ -4,7 +4,7 @@
       <!-- 顶部过滤列表 -->
 
       <div class="flights-content">
-        <!-- 过滤条件 -->
+        <!-- 航班过滤组件 -->
         <div>
           <FlightsFilters :data="cacheFlightsData" @setDataList="setDataList"></FlightsFilters>
         </div>
@@ -14,7 +14,7 @@
           <FlightsListHead></FlightsListHead>
         </div>
 
-        <!-- 航班信息 -->
+        <!-- 航班列表渲染组件 -->
         <div>
           <!-- 这里是一块数据，但是遍历出了多个 -->
           <FlightsItem v-for="(item, index) in dataList" :key="index" :data="item"></FlightsItem>
@@ -39,12 +39,14 @@
       </div>
       <!-- 侧边栏 -->
       <div class="aside">
+        <FlightsAside></FlightsAside>
         <!-- 侧边栏组件 -->
       </div>
     </el-row>
   </section>
 </template>
 <script>
+import FlightsAside from "@/components/air/flightsAside.vue"
 import FlightsFilters from "@/components/air/flightsFilters.vue";
 import FlightsItem from "@/components/air/flightsItem.vue";
 import FlightsListHead from "@/components/air/flightsListHead.vue";
@@ -57,7 +59,7 @@ export default {
       flightsData: {
         // 航班总数据
         //由于数据请求是异步的，需要先给子组件一个空数据，不至于报错，
-        flights: [],
+        flights: [], 
         info: {},
         options: {}
       }, //航班的总数据  这里总数据其他的组件会用得到，比如顶部搜索的历史等等
@@ -73,51 +75,56 @@ export default {
   components: {
     FlightsListHead,
     FlightsFilters,
-    FlightsItem
+    FlightsItem,
+    FlightsAside
   },
   methods:{
-    // 当切换当前页码的时候触发
-    handleSizeChange(v){
-      this.pageSize=v
-      this.setDataList()
-    },
-    //当切换每页显示的数量时触发
-    handleCurrentChange(v){
-      this.pageIndex=v
-      this.setDataList()
-    },
-    // 该函数是子组件发送事件和数据，接受触发的函数
+    // 子组件的自定义的事件触发后，会自定该函数，并且传递子组件发过来的数据
     setDataList(arr){
       if(arr){
-        // 如果子组件有传过来被筛选的数据，则重新覆盖掉航班信息的数据
+        // 如果子组件有传筛选过来的数据
         this.flightsData.flights=arr
-        
-        // 当筛选数据后,跳到第一页，改变分页器的数量
-        // 初始化分页的数据
-        this.total=arr.length
+
         this.pageIndex=1
+        this.total=arr.length //当前的页码数是数组的长度
+        
       }
-      // 当前航班列表信息数据
-      this.dataList=this.flightsData.flights.slice(
-        // 该数据方法，会返回一个切过的新数组
-        (this.pageIndex-1)*this.pageSize,
-        this.pageIndex*this.pageSize
-      )
+      this.dataList=this.flightsData.flights.slice((this.pageIndex-1)*this.pageSize,this.pageIndex*this.pageSize)
+    },
+    // 切换条数触发
+    handleSizeChange(value){
+      this.pageSize=value
+      this.setDataList()
+    },
+    // 切换页数触发
+    handleCurrentChange(value){
+      this.pageIndex=value
+      this.setDataList()
+    },
+    getData(){
+      // 获取当前的机票数据列表
+    this.$axios({
+      url:"airs",
+      params:this.$route.query
+    }).then((res)=>{
+      this.flightsData=res.data
+      this.dataList=this.flightsData.flights.slice(0,5) //初始化页码时候，显示的数据
+      this.cacheFlightsData={...res.data} //重新制作一份没有筛选过的数据，传过
+      this.total=this.flightsData.total
+      console.log(res.data)
+    })
     }
   },
   mounted(){
-    this.$axios({
-      url:"/airs",
-      params:this.$route.query
-    }).then(res=>{
-      this.flightsData=res.data
-      this.dataList=this.flightsData.flights.slice(0,5)
-      this.cacheFlightsData={...res.data} //缓存一份新的数据
-      this.total=this.flightsData.total
-    })
+    this.getData()
+  },
+  watch:{
+    // 监听路由变化
+    $route(){
+      this.getData()
+    }
   }
-  
-};
+}
 </script>
 <style lang="less" scoped>
 .contianer {
