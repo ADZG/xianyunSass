@@ -59,7 +59,7 @@ export default {
         //由于数据请求是异步的，需要先给子组件一个空数据，不至于报错，
         flights: [],
         info: {},
-        options: {},
+        options: {}
       }, //航班的总数据  这里总数据其他的组件会用得到，比如顶部搜索的历史等等
       dataList: [], //航班列表数据
       cacheFlightsData: {
@@ -75,51 +75,48 @@ export default {
     FlightsFilters,
     FlightsItem
   },
-  methods: {
-    // 分割数据数组，形成新的筛选过的数组，子组件去显示
-    setDataList(arr) {
-      if (arr) {
-        //  如果筛选后有数据传输进来
-        // 设置当前当前的页码
-        // 将当前显示的数据，替换成筛选过的arr数据
-        // 将数据条数，替换成筛选过后的数组的长度
+  methods:{
+    // 当切换当前页码的时候触发
+    handleSizeChange(v){
+      this.pageSize=v
+      this.setDataList()
+    },
+    //当切换每页显示的数量时触发
+    handleCurrentChange(v){
+      this.pageIndex=v
+      this.setDataList()
+    },
+    // 该函数是子组件发送事件和数据，接受触发的函数
+    setDataList(arr){
+      if(arr){
+        // 如果子组件有传过来被筛选的数据，则重新覆盖掉航班信息的数据
         this.flightsData.flights=arr
-        this.pageIndex = 1;
-        this.total= arr.length;
+        
+        // 当筛选数据后,跳到第一页，改变分页器的数量
+        // 初始化分页的数据
+        this.total=arr.length
+        this.pageIndex=1
       }
-      // 这里在子组件发射了一个事件，并且事件里有数组数据，监听自定义事件，只要子组件上该事件一触发，则这个事件也触发
-      // 只是名称一样
-      //   搜索之后，服务器将所有的数据全部返回来，要自己进行筛选
-      let start = (this.pageIndex - 1) * this.pageSize; //分页是从1开始，而数组分隔是从索引0开始, 得到分割开始的索引
-      let end =this.pageIndex* this.pageSize; //得到分割结束的索引
-      this.dataList = this.flightsData.flights.slice(start, end); //找到当前机票数据列表,切割后返回一个新的数组
-    },
-    //    切换条数触发
-    handleSizeChange(v) {
-      this.pageSize = v;
-      // this.pageIndex = 1;
-      this.setDataList();
-      //   在当前页码或者每页显示的条数改变的时候，都重新切割一份新的数组，在页面显示
-    },
-    //   当前页码改变触发
-    handleCurrentChange(v) {
-      this.pageIndex = v;
-      this.setDataList();
+      // 当前航班列表信息数据
+      this.dataList=this.flightsData.flights.slice(
+        // 该数据方法，会返回一个切过的新数组
+        (this.pageIndex-1)*this.pageSize,
+        this.pageIndex*this.pageSize
+      )
     }
   },
-  mounted() {
+  mounted(){
     this.$axios({
-      url: "/airs",
-      params: this.$route.query
-    }).then(res => {
-      this.flightsData = res.data;
-      this.dataList = this.flightsData.flights;
-      // this.setDataList();
-      this.cacheFlightsData={...res.data}
-      //   console.log(res.data);
+      url:"/airs",
+      params:this.$route.query
+    }).then(res=>{
+      this.flightsData=res.data
+      this.dataList=this.flightsData.flights.slice(0,5)
+      this.cacheFlightsData={...res.data} //缓存一份新的数据
       this.total=this.flightsData.total
-    });
+    })
   }
+  
 };
 </script>
 <style lang="less" scoped>

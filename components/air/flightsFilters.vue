@@ -22,7 +22,7 @@
           <el-option
             v-for="(item, index) in data.options.flightTimes"
             :key="index"
-            :label="`${item.to}:00-${item.from}:00`"
+            :label="`${item.from}:00-${item.to}:00`"
             :value="item"
           ></el-option>
         </el-select>
@@ -76,49 +76,43 @@ export default {
     };
   },
   methods: {
-    // 选择机场的时候触发
-    handleAirport(value) {
-      const arr = this.data.flights.filter(v => {
-        //   遍历当前父组件传入的数据列表，如果输入框的数据和父组件的数组有匹配的，则返回新成一个新的数组
-        return v.org_airport_name === value;
+    // 选择起飞机场触发的事件
+    handleAirport(v) {
+      let arr = this.data.flights.filter(value => {
+        return value.org_airport_name === v;
       });
       this.$emit("setDataList", arr);
     },
-    // 选择出发时间触发
+    // 选择起飞时间的时候触发
     handleFlightTimes(value) {
-      const arr = tihs.data.flights.filter(v => {
-        // 当前时间的抵达时间小于等于筛选项的抵达时间;
-        return (
-          value.from <= +v.dep_time.split(":")[0] &&
-          value.to > +v.dep_time.split(":")[1]
-        );
+       this.flightTimes = value.from +":00-"+ value.to+":00"
+       const arr = this.data.flights.filter(v => {
+        // 开始的小时数字
+        const start = +v.dep_time.split(":")[0];
+        return value.from <= start && value.to > start;
       });
       this.$emit("setDataList", arr);
     },
-    // 选择航空公司触发
-    handleCompany(value) {
-      // console.log(this.data)
-      const arr = this.data.flights.filter(v => {
-        //   遍历当前父组件传入的数据列表，如果输入框的数据和父组件的数组有匹配的，则返回新成一个新的数组
-        return v.airline_name === value;
+    // 选择航空公司时候触发
+    handleCompany(v) {
+      let arr = this.data.flights.filter(value => {
+        return value.airline_name === v;
       });
+      this.$emit("setDataList", arr)
+    },
+    // 选择机型大小的时候触发
+    handleAirSize(v) {
+      const arr = this.data.flights.filter(value => value.plane_size === v);
+
       this.$emit("setDataList", arr);
     },
-    // 选择机型触发
-    handleAirSize(value) {
-      const arr = this.data.flights.filter(v => {
-        //   遍历当前父组件传入的数据列表，如果输入框的数据和父组件的数组有匹配的，则返回新成一个新的数组
-        return v.plane_size === value;
-      });
-      this.$emit("setDataList", arr);
-    },
-    // 取消筛选条件
+    // 撤销的时候触发
     handleFiltersCancel() {
-    //   所有的筛选条件全部清空;
       this.airport = "";
       this.flightTimes = "";
       this.company = "";
       this.airSize = "";
+
       this.$emit("setDataList", this.data.flights);
     }
   }
