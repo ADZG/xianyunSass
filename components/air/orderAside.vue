@@ -37,7 +37,7 @@
     </el-row>
     <el-row type="flex" justify="space-between" align="middle" class="info-bar">
       <span>应付总额：</span>
-      <span class="price">￥{{priceNum}}</span>
+      <span class="price">￥{{priceNum | toFix}}</span>
     </el-row>
   </div>
 </template>
@@ -75,6 +75,11 @@ export default {
     getsum(){
         console.log(this.priceNum)
     }
+  },
+  filters:{
+      toFix(priceNum){
+          return Number(priceNum).toFixed(2)
+      }
   }
 };
 </script>

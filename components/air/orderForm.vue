@@ -161,6 +161,12 @@ export default {
           message: "正在生成订单！请稍等",
           type: "success"
         });
+        this.$router.push({
+          path:"/air/pay",
+          query:{
+            id:res.data.data.id
+          }
+        })
       });
     }
   },
