@@ -79,7 +79,8 @@ export default {
     FlightsAside
   },
   methods:{
-    // 子组件的自定义的事件触发后，会自定该函数，并且传递子组件发过来的数据
+    // 子组件的自定义的事件触发后，会自定该函数，并且传递子组件发过来的数据,
+    // 再根据该数据发送给渲染的组件，分页也根据该数据
     setDataList(arr){
       if(arr){
         // 如果子组件有传筛选过来的数据
@@ -110,8 +111,11 @@ export default {
       this.flightsData=res.data
       this.dataList=this.flightsData.flights.slice(0,5) //初始化页码时候，显示的数据
       this.cacheFlightsData={...res.data} //重新制作一份没有筛选过的数据，传过
+      
+      // 初始化页面
       this.total=this.flightsData.total
-      console.log(res.data)
+      this.pageIndex=1
+      // console.log(res.data)
     })
     }
   },

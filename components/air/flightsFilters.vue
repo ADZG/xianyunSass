@@ -78,10 +78,11 @@ export default {
   methods: {
     // 起飞机场筛选触发
     handleAirport(value) {
-      let arr =this.data.flights.map(v => {
+      let arr = this.data.flights.filter(v => {
         // 将机票列表与当前选中的值进行比较，
         return v.org_airport_name === value;
       });
+      this.$emit("setDataList", arr);
     },
     // 起飞时间筛选触发
     handleFlightTimes(value) {
@@ -100,7 +101,7 @@ export default {
     },
     // 选择航空公司触发
     handleCompany(value) {
-      let arr = this.data.flights.map(v => {
+      let arr = this.data.flights.filter(v => {
         return v.airline_name === value;
       });
 
@@ -108,7 +109,7 @@ export default {
     },
     // 选择机型大小触发
     handleAirSize(value) {
-      let arr = this.data.flights.map(v => {
+      let arr = this.data.flights.filter(v => {
         return v.plane_size === value;
       });
 
@@ -123,7 +124,7 @@ export default {
       // 清空所有选择项
       this.$emit("setDataList", this.data.flights);
     }
-  }
+  },
 };
 </script>
 <style scoped lang="less">

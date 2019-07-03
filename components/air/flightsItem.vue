@@ -4,7 +4,7 @@
       <!-- 显示的机票信息 -->
       <el-row type="flex" align="middle" class="flight-info">
         <el-col :span="6">
-          <span>{{data.airline_name}}</span> MU5316
+          <span>{{data.airline_name}}</span> {{data.flight_no}}
         </el-col>
         <el-col :span="12">
           <el-row type="flex" justify="space-between" class="flight-info-center">
@@ -46,7 +46,9 @@
             </el-col>
             <el-col :span="5" class="price">{{item.org_settle_price}}</el-col>
             <el-col :span="3" class="choose-button">
-              <el-button type="warning" size="mini">选定</el-button>
+              <!-- 这里传item，就是每一个小项的item，这一整个订单列表，只是大数据中一个，在外面该组件被
+              遍历渲染了多次 -->
+              <el-button type="warning" size="mini" @click="handlebuy(item)">选择</el-button>
               <p>剩余：{{item.discount}}</p>
             </el-col>
           </el-row>
@@ -86,7 +88,18 @@ export default {
   },
   methods: {
     hindle() {
+      console.log(this.data)
       this.currnet = !this.currnet;
+    },
+    handlebuy(item){
+      console.log(item)
+      this.$router.push({
+        path:"/air/order",
+        query:{
+          id:this.data.id,
+          seat_xid:item.seat_xid
+        }
+      })
     }
   }
 };
