@@ -1,7 +1,7 @@
 <template>
   <div class="container">
     <!-- 幻灯片 -->
-    <el-carousel :interval="5000" arrow="always" type="card">
+    <el-carousel :interval="5000" arrow="always">
       <el-carousel-item v-for="(item, index) in banners" :key="index">
         <div
           class="banner-image"

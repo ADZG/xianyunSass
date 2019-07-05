@@ -8,7 +8,7 @@
         {{data.info.departDate}}
       </el-col>
       <el-col :span="4">
-        <el-select size="mini" v-model="airport" placeholder="起飞机场" @change="handleAirport">
+        <el-select size="mini" v-model="filtersitem.airport" placeholder="起飞机场">
           <el-option
             v-for="(item, index) in data.options.airport"
             :key="index"
@@ -18,17 +18,17 @@
         </el-select>
       </el-col>
       <el-col :span="4">
-        <el-select size="mini" v-model="flightTimes" placeholder="起飞时间" @change="handleFlightTimes">
+        <el-select size="mini" v-model="filtersitem.flightTimes" placeholder="起飞时间">
           <el-option
             v-for="(item, index) in data.options.flightTimes"
             :key="index"
             :label="`${item.from}:00-${item.to}:00`"
-            :value="item"
+            :value="`${item.from}:00-${item.to}:00`"
           ></el-option>
         </el-select>
       </el-col>
       <el-col :span="4">
-        <el-select size="mini" v-model="company" placeholder="航空公司" @change="handleCompany">
+        <el-select size="mini" v-model="filtersitem.company" placeholder="航空公司">
           <el-option
             v-for="(item, index) in data.options.company"
             :key="index"
@@ -38,7 +38,7 @@
         </el-select>
       </el-col>
       <el-col :span="4">
-        <el-select size="mini" v-model="airSize" placeholder="机型" @change="handleAirSize">
+        <el-select size="mini" v-model="filtersitem.airSize" placeholder="机型">
           <el-option
             v-for="(item, index) in plantsize"
             :key="index"
@@ -64,10 +64,12 @@ export default {
   },
   data() {
     return {
-      airport: "",
-      flightTimes: "",
-      company: "",
-      airSize: "",
+      filtersitem: {
+        airport: "",
+        flightTimes: "",
+        company: "",
+        airSize: ""
+      },
       plantsize: [
         { type: "大", size: "L" },
         { type: "中", size: "M" },
@@ -76,43 +78,34 @@ export default {
     };
   },
   methods: {
-    // 起飞机场筛选触发
-    handleAirport(value) {
-      let arr = this.data.flights.filter(v => {
-        // 将机票列表与当前选中的值进行比较，
-        return v.org_airport_name === value;
-      });
-      this.$emit("setDataList", arr);
-    },
-    // 起飞时间筛选触发
-    handleFlightTimes(value) {
-      this.flightTimes = value.from + ":00-" + value.to + ":00";
-      // 选择后是一个对象，将他转化
-
-      const arr = this.data.flights.filter(v => {
-        // 开始的小时数字
-        const start = +v.dep_time.split(":")[0];
-
-        return value.from <= start && value.to > start;
-      });
-
-      // 触发修改机票列表的方法 setDataList
-      this.$emit("setDataList", arr);
-    },
-    // 选择航空公司触发
-    handleCompany(value) {
-      let arr = this.data.flights.filter(v => {
-        return v.airline_name === value;
-      });
-
-      this.$emit("setDataList", arr);
-    },
-    // 选择机型大小触发
-    handleAirSize(value) {
-      let arr = this.data.flights.filter(v => {
-        return v.plane_size === value;
-      });
-
+    handleFilter(val) {
+      var arr = this.data.flights;
+      if (val.airport !== "") {
+        arr = arr.filter(v => {
+          // 将机票列表与当前选中的值进行比较，
+          return v.org_airport_name === val.airport;
+        });
+      }
+      if (val.flightTimes !== "") {
+        // console.log(val.flightTime);
+        let timestr = val.flightTimes.split("-"); //这里是从渲染的数据拿到的，需要重新切割
+        let from = timestr[0].split(":")[0]; //筛选的开始起飞时间
+        let to = timestr[1].split(":")[0]; //筛选的结束起飞时间
+        arr = arr.filter(v => {
+          const start = +v.dep_time.split(":")[0]; //起飞时间
+          return from <= start && to > start; //需要在起飞时间之间才行
+        });
+      }
+      if (val.company !== "") {
+        arr = arr.filter(v => {
+          return val.company === v.airline_name;
+        });
+      }
+      if (val.airSize !== "") {
+        arr = arr.filter(v => {
+          return val.airSize === v.plane_size;
+        });
+      }
       this.$emit("setDataList", arr);
     },
     // 撤销所有筛选条件触发
@@ -125,6 +118,14 @@ export default {
       this.$emit("setDataList", this.data.flights);
     }
   },
+  watch: {
+    filtersitem: {
+      handler(val, oldVal) {
+        this.handleFilter(val);
+      },
+      deep: true
+    }
+  }
 };
 </script>
 <style scoped lang="less">

@@ -3,7 +3,7 @@
     <el-row type="flex" justify="space-between" class="main">
       <div class="logo">
         <nuxt-link to="/">
-          <img src="http://157.122.54.189:9093/images/logo.jpg" alt>
+          <img src="../static/login.jpg" alt>
         </nuxt-link>
       </div>
 
@@ -60,7 +60,7 @@ export default {
     width: 1000px;
     margin: 0 auto;
     .logo {
-      width: 156px;
+      width: 100px;
       padding-top: 8px;
       img {
         width: 100%;
@@ -78,12 +78,12 @@ export default {
         &:hover,
         &:focus,
         &:active {
-          border-bottom: 5px solid #66ccff;
-          color: #66ccff;
+          border-bottom: 5px solid #ccc;
+          color: #ff8b00;
         }
       }
       .nuxt-link-exact-active {
-        background-image: linear-gradient(160deg, #00ffd5 20%, #008cff 80%);
+        background-image: linear-gradient(160deg, #00ffd5 20%,#008cff 80%);
         color: #fff !important;
       }
     }

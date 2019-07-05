@@ -3,7 +3,7 @@
         <div class="footer">
             <el-row class="info-list">
                 <el-col :span="6" :offset="1">
-                    <h5>闲云旅游旅游网</h5>
+                    <h5>云端旅游</h5>
                     <p>上亿旅行者共同打造的"旅行神器"</p>
                     <p><span>60,000</span> 多个全球旅游目的地</p>
                     <p><span>600,000</span> 个细分目的地新玩法</p>
@@ -34,10 +34,6 @@
                     关注我们
                 </el-col>
             </el-row>
-
-            <div class="licence">
-                京ICP备08001421号 京公网安备110108007702 Copyright © 2016-2019 博学谷 All Rights Reserved
-            </div>
         </div>
     </div>
 </template>
